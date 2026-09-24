@@ -1,0 +1,7 @@
+services:
+  atrium:
+    container_name: atrium
+    build: .
+    tty: true
+    ports:
+      - 127.0.0.1:9090:9090
