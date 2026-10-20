@@ -5,3 +5,28 @@ services:
     tty: true
     ports:
       - 127.0.0.1:9090:9090
+    networks:
+      - zap-network
+
+  zap:
+    container_name: zap-atrium
+    image: zaproxy/zap-stable
+    tty: true
+    networks:
+      - zap-network
+
+  semgrep:
+    container_name: semgrep-atrium
+    image: semgrep/semgrep
+    tty: true
+    command: ["semgrep", "--config=scan-rules/", "src/"]
+    depends_on:
+      atrium:
+        condition: service_started
+        restart: true
+    volumes:
+      - ./:/src
+
+networks:
+  zap-network:
+    driver: bridge
