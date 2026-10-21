@@ -5,15 +5,23 @@ services:
     tty: true
     ports:
       - 127.0.0.1:9090:9090
-    networks:
-      - zap-network
 
   zap:
     container_name: zap-atrium
     image: zaproxy/zap-stable
     tty: true
-    networks:
-      - zap-network
+    ports:
+      - 127.0.0.1:8090:8090
+      - 127.0.0.1:8080:8080
+    command: ["zap-webswing.sh"]
+    depends_on:
+      atrium:
+        condition: service_started
+        restart: true
+    volumes:
+      - ./:/src
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   semgrep:
     container_name: semgrep-atrium
@@ -26,7 +34,3 @@ services:
         restart: true
     volumes:
       - ./:/src
-
-networks:
-  zap-network:
-    driver: bridge
